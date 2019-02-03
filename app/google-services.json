@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "553502249918",
+    "firebase_url": "https://damisfyp.firebaseio.com",
+    "project_id": "damisfyp",
+    "storage_bucket": "damisfyp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:553502249918:android:8d2eb25d29b0641b",
+        "android_client_info": {
+          "package_name": "com.example.oladipo.damisfyp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "553502249918-bnm329r5nhthbo26nsl8240t81fa79q1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.oladipo.damisfyp",
+            "certificate_hash": "f4f46a3d951e9471aec857387eadcb2f001005b4"
+          }
+        },
+        {
+          "client_id": "553502249918-ga16v19n3tj7ogd0ukp6ckinb6ig4c9h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAW2L9EH44918lVunk2IGPNp6EjwdPiOZU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "553502249918-ga16v19n3tj7ogd0ukp6ckinb6ig4c9h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
