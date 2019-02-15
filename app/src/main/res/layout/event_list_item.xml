@@ -63,6 +63,20 @@
                     android:text="Timestamp"
                     android:paddingLeft="7dp"
                     android:gravity="center_vertical"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/likesCount"
+                    android:layout_marginLeft="40dp"
+                    android:text="No Likes"/>
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="50dp"
+                    android:id="@+id/likes"
+                    android:src="@mipmap/action_like_gray_web"/>
             </LinearLayout>
         </LinearLayout>
 

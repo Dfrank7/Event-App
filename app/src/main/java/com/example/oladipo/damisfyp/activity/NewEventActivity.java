@@ -95,13 +95,13 @@ public class NewEventActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
 
-                showProgressDialog("Please Wait");
                 final String desc = description.getText().toString();
                 final String title = postTitle.getText().toString();
                 final String genre = genreEditText.getText().toString();
 
                 if(!TextUtils.isEmpty(desc) || !TextUtils.isEmpty(title) || !TextUtils.isEmpty(genre)
                         || postImageUri != null){
+                    showProgressDialog("Please Wait");
 
                     //newPostProgress.setVisibility(View.VISIBLE);
 
@@ -216,6 +216,8 @@ public class NewEventActivity extends BaseActivity {
                     });
 
 
+                }else{
+                    toast(getApplicationContext(), "Please Fill fields");
                 }
 
             }

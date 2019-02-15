@@ -1,7 +1,9 @@
 package com.example.oladipo.damisfyp.adapter;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
@@ -15,12 +17,24 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.oladipo.damisfyp.R;
+import com.example.oladipo.damisfyp.activity.DetailActivity;
 import com.example.oladipo.damisfyp.model.Event;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,6 +43,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.viewHolder> 
 
     private Context context;
     private List<Event> eventList;
+
+    private FirebaseFirestore firebaseFirestore;
+    private FirebaseAuth firebaseAuth;
 
     public EventAdapter(Context context, List<Event> eventList) {
         this.context = context;
@@ -39,12 +56,16 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.viewHolder> 
     @Override
     public EventAdapter.viewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(context).inflate(R.layout.event_list_item, viewGroup, false);
+        firebaseFirestore = FirebaseFirestore.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
         return new viewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull EventAdapter.viewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final EventAdapter.viewHolder holder, int position) {
 
+        final String eventPostId = eventList.get(position).EventId;
+        final String currentUserId = firebaseAuth.getCurrentUser().getUid();
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.placeholder(R.drawable.blog_placeholder);
 //        Glide.with(context)
@@ -70,6 +91,73 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.viewHolder> 
 
         }
 
+        //Get Likes Count
+        firebaseFirestore.collection("Posts/" + eventPostId + "/Likes").addSnapshotListener( new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+
+                if(!documentSnapshots.isEmpty()){
+
+                    int count = documentSnapshots.size();
+
+                    holder.likesCount.setText(count + " Like(s)");
+
+                } else {
+
+                    holder.likesCount.setText(0+" Likes");
+
+                }
+
+            }
+        });
+
+
+        //Get Likes
+        firebaseFirestore.collection("Posts/" + eventPostId + "/Likes").document(currentUserId).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @android.support.annotation.RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+
+                if(documentSnapshot.exists()){
+
+                    holder.eventLikes.setImageDrawable(context.getDrawable(R.mipmap.action_like_accent_web));
+
+                } else {
+
+                    holder.eventLikes.setImageDrawable(context.getDrawable(R.mipmap.action_like_gray_web));
+
+                }
+
+            }
+        });
+
+        //Likes Feature
+        holder.eventLikes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                firebaseFirestore.collection("Posts/" + eventPostId + "/Likes").document(currentUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                        if(!task.getResult().exists()){
+
+                            Map<String, Object> likesMap = new HashMap<>();
+                            likesMap.put("timestamp", FieldValue.serverTimestamp());
+
+                            firebaseFirestore.collection("Posts/" + eventPostId + "/Likes").document(currentUserId).set(likesMap);
+
+                        } else {
+
+                            firebaseFirestore.collection("Posts/" + eventPostId + "/Likes").document(currentUserId).delete();
+
+                        }
+
+                    }
+                });
+            }
+        });
+
     }
 
     @Override
@@ -86,6 +174,10 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.viewHolder> 
         TextView post_genere;
         @BindView(R.id.post_timestamp)
         TextView post_timestamp;
+        @BindView(R.id.likes)
+        ImageView eventLikes;
+        @BindView(R.id.likesCount)
+        TextView likesCount;
         public viewHolder(final View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
@@ -94,16 +186,16 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.viewHolder> 
                 @Override
                 public void onClick(View view) {
                     int position = getAdapterPosition();
-//                    if (position != RecyclerView.NO_POSITION){
-//                        Intent intent = new Intent(itemView.getContext(), BlogDetailActivity.class);
-//                        intent.putExtra("title", eventList.get(position).getPost());
-//                        intent.putExtra("image", eventList.get(position).getImage());
-//                        intent.putExtra("description", eventList.get(position).getDescription());
-//                        intent.putExtra("genre", eventList.get(position).getGenre());
-//                        intent.putExtra("blogId", eventList.get(position).EventId);
-//                        //Log.d(Constants.TAG, blogList.get(position).BlogId);
-//                        itemView.getContext().startActivity(intent);
-//                    }
+                    if (position != RecyclerView.NO_POSITION){
+                        Intent intent = new Intent(itemView.getContext(), DetailActivity.class);
+                        intent.putExtra("title", eventList.get(position).getPost());
+                        intent.putExtra("image", eventList.get(position).getImage());
+                        intent.putExtra("description", eventList.get(position).getDescription());
+                        intent.putExtra("genre", eventList.get(position).getGenre());
+                        intent.putExtra("eventId", eventList.get(position).EventId);
+                        //Log.d(Constants.TAG, blogList.get(position).BlogId);
+                        itemView.getContext().startActivity(intent);
+                    }
                 }
             });
         }
