@@ -1,4 +1,8 @@
 <resources>
-    <string name="app_name">Dami\'s FYP</string>
+    <string name="app_name">Event App</string>
     <string name="action_settings">Settings</string>
+    <string name="admin_text">Sign in as admin</string>
+    <string name="dummy_text">Lorem ipsum dolor sit amet,
+        consectetuer adipiscing elit. Aenean commodo ligula eget dolor.</string>
+
 </resources>

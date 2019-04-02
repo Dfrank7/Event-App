@@ -40,6 +40,7 @@ public class SignInActivity extends BaseActivity {
     @BindView(R.id.registerLinearLayout)
     LinearLayout linearLayout;
     private FirebaseAuth mAuth;
+    private BackgroundActivity backgroundActivity;
     private FirebaseFirestore firestore;
     private String user_id;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
@@ -51,12 +52,13 @@ public class SignInActivity extends BaseActivity {
         ButterKnife.bind(this);
         //mAuth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
+        backgroundActivity = new BackgroundActivity();
 
-        if (FirebaseAuth.getInstance().getCurrentUser() != null){
-            Intent intent = new Intent(SignInActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-        }
+//        if (FirebaseAuth.getInstance().getCurrentUser() != null){
+//            Intent intent = new Intent(SignInActivity.this, MainActivity.class);
+//                    startActivity(intent);
+//                    finish();
+//        }
 
 //        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
 //            @Override
@@ -114,8 +116,8 @@ public class SignInActivity extends BaseActivity {
 
         Map<String, Object> postMap = new HashMap<>();
         postMap.put("Email", email);
-        postMap.put("Staff Id", password);
-        postMap.put("Staff Name", name);
+        postMap.put("User Id", password);
+        postMap.put("User Name", name);
         firestore.collection("Users").document(user_id).set(postMap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -126,6 +128,7 @@ public class SignInActivity extends BaseActivity {
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(intent);
                     finish();
+                    backgroundActivity.finish();
 
                 } else {
 

@@ -52,7 +52,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.viewHold
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()){
                     if (task.getResult().exists()) {
-                        name = task.getResult().getString("name");
+                        String name = task.getResult().getString("User Name");
                         holder.username.setText(name);
                     }
                 }

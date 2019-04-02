@@ -1,32 +1,31 @@
 package com.example.oladipo.damisfyp.activity;
 
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.example.oladipo.damisfyp.R;
 import com.example.oladipo.damisfyp.adapter.EventAdapter;
+import com.example.oladipo.damisfyp.base.BaseActivity;
 import com.example.oladipo.damisfyp.model.Event;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -39,9 +38,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static java.security.AccessController.getContext;
-
-public class MainActivity extends AppCompatActivity {
+public class AdminActivity extends BaseActivity {
 
     @BindView(R.id.event_recyclerview)
     RecyclerView recyclerView;
@@ -51,7 +48,8 @@ public class MainActivity extends AppCompatActivity {
     ProgressBar progressBar;
     @BindView(R.id.swipe)
     SwipeRefreshLayout refreshLayout;
-    @BindView(R.id.fab) FloatingActionButton fab;
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
     private FirebaseFirestore firestore;
     private FirebaseAuth mAuth;
     private List<Event> eventList= new ArrayList<>();
@@ -64,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        ButterKnife.bind(this);;
+        ButterKnife.bind(this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         eventAdapter = new EventAdapter(this, eventList);
         recyclerView.smoothScrollToPosition(0);
@@ -93,28 +91,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-            hideFloatingActionButton(fab);
-
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                startActivity(new Intent(getApplicationContext(), NewEventActivity.class));
-//            }
-//        });
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), NewEventActivity.class));
+            }
+        });
     }
 
-    private void hideFloatingActionButton(FloatingActionButton fab) {
-        CoordinatorLayout.LayoutParams params =
-                (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
-        FloatingActionButton.Behavior behavior =
-                (FloatingActionButton.Behavior) params.getBehavior();
-
-        if (behavior != null) {
-            behavior.setAutoHideEnabled(false);
-        }
-
-        fab.hide();
-    }
 
 
     private void fetchPost(){
@@ -130,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
                         String eventPostId = doc.getDocument().getId();
                         Event event = doc.getDocument().toObject(Event.class).withId(eventPostId);
                         eventList.add(event);
-                       eventAdapter.notifyDataSetChanged();
+                        eventAdapter.notifyDataSetChanged();
                     }
                     if (refreshLayout.isRefreshing()){
                         refreshLayout.setRefreshing(false);
@@ -188,6 +172,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void signOut(){
         mAuth.signOut();
-        startActivity(new Intent(MainActivity.this, BackgroundActivity.class));
+        startActivity(new Intent(AdminActivity.this, BackgroundActivity.class));
     }
 }

@@ -1,8 +1,13 @@
 package com.example.oladipo.damisfyp.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -12,6 +17,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.oladipo.damisfyp.R;
 import com.example.oladipo.damisfyp.base.BaseActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -40,6 +47,7 @@ public class DetailActivity extends BaseActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore firestore;
     private String eventPostId;
+    String title;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,12 +72,12 @@ public class DetailActivity extends BaseActivity {
     private void bindData(){
 
         intent = getIntent();
-        String title = intent.getStringExtra("title");
+        title = intent.getStringExtra("title");
         String desc = intent.getStringExtra("description");
         String genre = intent.getStringExtra("genre");
         String image = intent.getStringExtra("image");
         eventPostId = intent.getStringExtra("eventId");
-        firestore.collection("Posts/" + eventPostId + "/Comments").addSnapshotListener(new EventListener<QuerySnapshot>() {
+        firestore.collection("Events/" + eventPostId + "/Comments").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
                 if (!documentSnapshots.isEmpty()){
@@ -99,5 +107,28 @@ public class DetailActivity extends BaseActivity {
                 .load(image)
                 .into(imageView);
 
+    }
+    private void share(){
+        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, title);
+        startActivity(Intent.createChooser(sharingIntent, "Share via"));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.detail_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id){
+            case R.id.action_share:
+                share();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

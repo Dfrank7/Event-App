@@ -76,7 +76,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.viewHolder> 
                 .load(eventList.get(position).getImage())
                 .into(holder.post_image);
 
-        holder.post_title.setText(eventList.get(position).getPost());
+        holder.post_title.setText(eventList.get(position).getEvent());
         holder.post_genere.setText(eventList.get(position).getGenre());
 
         try {
@@ -92,7 +92,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.viewHolder> 
         }
 
         //Get Likes Count
-        firebaseFirestore.collection("Posts/" + eventPostId + "/Likes").addSnapshotListener( new EventListener<QuerySnapshot>() {
+        firebaseFirestore.collection("Events/" + eventPostId + "/Likes").addSnapshotListener( new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
@@ -113,7 +113,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.viewHolder> 
 
 
         //Get Likes
-        firebaseFirestore.collection("Posts/" + eventPostId + "/Likes").document(currentUserId).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+        firebaseFirestore.collection("Events/" + eventPostId + "/Likes").document(currentUserId).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @android.support.annotation.RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
@@ -136,7 +136,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.viewHolder> 
             @Override
             public void onClick(View v) {
 
-                firebaseFirestore.collection("Posts/" + eventPostId + "/Likes").document(currentUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                firebaseFirestore.collection("Events/" + eventPostId + "/Likes").document(currentUserId)
+                        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
@@ -145,11 +146,11 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.viewHolder> 
                             Map<String, Object> likesMap = new HashMap<>();
                             likesMap.put("timestamp", FieldValue.serverTimestamp());
 
-                            firebaseFirestore.collection("Posts/" + eventPostId + "/Likes").document(currentUserId).set(likesMap);
+                            firebaseFirestore.collection("Events/" + eventPostId + "/Likes").document(currentUserId).set(likesMap);
 
                         } else {
 
-                            firebaseFirestore.collection("Posts/" + eventPostId + "/Likes").document(currentUserId).delete();
+                            firebaseFirestore.collection("Events/" + eventPostId + "/Likes").document(currentUserId).delete();
 
                         }
 
@@ -188,7 +189,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.viewHolder> 
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION){
                         Intent intent = new Intent(itemView.getContext(), DetailActivity.class);
-                        intent.putExtra("title", eventList.get(position).getPost());
+                        intent.putExtra("title", eventList.get(position).getEvent());
                         intent.putExtra("image", eventList.get(position).getImage());
                         intent.putExtra("description", eventList.get(position).getDescription());
                         intent.putExtra("genre", eventList.get(position).getGenre());

@@ -72,7 +72,7 @@ public class CommentActivity extends BaseActivity {
         recyclerView.setAdapter(commentAdapter);
         context = CommentActivity.this;
 
-        Query firstQuery = firestore.collection("Posts/"+eventId+"/Comments").orderBy("timestamp",Query.Direction.DESCENDING);
+        Query firstQuery = firestore.collection("Events/"+eventId+"/Comments").orderBy("timestamp",Query.Direction.DESCENDING);
         firstQuery.addSnapshotListener(this, new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
@@ -97,13 +97,13 @@ public class CommentActivity extends BaseActivity {
                     comment = new Comment(message, getUid().toString(), FieldValue.serverTimestamp());
                     Map<String, Object> postMap = new HashMap<>();
                     postMap.put("message", message);
-                    postMap.put("user_id", getUid().toString());
+                    postMap.put("user_id", getUid());
                     postMap.put("timestamp", FieldValue.serverTimestamp());
                     if (TextUtils.isEmpty(message)) {
                         commentField.setError("Please enter message");
                     } else {
                         commentField.setText("");
-                        firestore.collection("Posts/" + eventId + "/Comments").add(postMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                        firestore.collection("Events/" + eventId + "/Comments").add(postMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentReference> task) {
 //                                commentField.setText("");

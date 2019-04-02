@@ -165,14 +165,14 @@ public class NewEventActivity extends BaseActivity {
 
                                         Map<String, Object> postMap = new HashMap<>();
                                         postMap.put("image", downloadUri);
-                                        postMap.put("post", title);
+                                        postMap.put("event", title);
                                         postMap.put("description", desc);
                                         postMap.put("genre", genre);
                                         postMap.put("timestamp", System.currentTimeMillis());
 
                                         //long time = System.currentTimeMillis();
 
-                                        firebaseFirestore.collection("Posts").add(postMap)
+                                        firebaseFirestore.collection("Events").add(postMap)
                                                 .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                                                     @Override
                                                     public void onComplete(@NonNull Task<DocumentReference> task) {
@@ -181,7 +181,7 @@ public class NewEventActivity extends BaseActivity {
                                                         if(task.isSuccessful()){
 
                                                             toast(getApplicationContext(), "Event was Successfully added");
-                                                            Intent mainIntent = new Intent(NewEventActivity.this, MainActivity.class);
+                                                            Intent mainIntent = new Intent(NewEventActivity.this, AdminActivity.class);
                                                             startActivity(mainIntent);
                                                             finish();
 

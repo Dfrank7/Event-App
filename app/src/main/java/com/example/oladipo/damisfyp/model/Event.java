@@ -4,7 +4,7 @@ public class Event extends EventId  {
 
     private String genre;
     private String image;
-    private String post;
+    private String event;
     private long timestamp;
     private String description;
 //    private FieldValue timestamp;
@@ -16,7 +16,7 @@ public class Event extends EventId  {
     public Event(String genre, String image, String title,long timestamp, String description) {
         this.genre = genre;
         this.image = image;
-        post = title;
+        event = title;
         this.timestamp = timestamp;
         this.description = description;
     }
@@ -37,8 +37,8 @@ public class Event extends EventId  {
         return image;
     }
 
-    public String getPost() {
-        return post;
+    public String getEvent() {
+        return event;
     }
 
     public Long getTimestamp() {
